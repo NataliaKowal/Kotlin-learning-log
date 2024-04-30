@@ -1,4 +1,4 @@
-package com.example.github_kotlin
+package com.example.github_kotlin.KLASY
 
 /**
  * @author Natalia Kowal
