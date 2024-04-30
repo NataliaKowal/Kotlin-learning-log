@@ -1,8 +1,11 @@
 package com.example.github_kotlin.KLASY_TESTY
 
+// Klasa RNASequence reprezentuje sekwencję RNA i rozszerza klasę Sequence
 class RNASequence:Sequence {
-    // kodonyNaAminokwasy zostały wygenerowane za pomocą modelu językowego
+    //  Mapa kodonów RNA na odpowiadające im aminokwasy (kodonyNaAminokwasy zostały wygenerowane za pomocą modelu językowego)
     val kodonyNaAminokwasy = mapOf(
+        // Tutaj znajduje się lista kodonów dla każdego aminokwasu, np. "GCT" to "A" oznacza, że kodon GCT koduje aminokwas alaninę (A) itd.
+
         // Alanina
         "GCT" to "A", "GCC" to "A", "GCA" to "A", "GCG" to "A",
         // Arginina
@@ -44,24 +47,32 @@ class RNASequence:Sequence {
         // Walina
         "GTT" to "V", "GTC" to "V", "GTA" to "V", "GTG" to "V"
     )
-
+    // Konstruktor klasy RNASequence, który przyjmuje identyfikator i dane sekwencji
+    // Lista 'A', 'U', 'C', 'G' to dozwolone znaki dla sekwencji RNA
     constructor(new_identifier:String, new_data:String):super(new_identifier,new_data, listOf('A', 'U', 'C', 'G')){
     }
 
+    // Metoda sprawdzająca, czy podany kodon jest kodonem startu (AUG)
     fun isStartKodon(kodon: String): Boolean {
         return kodon == "AUG"
     }
 
+    // Metoda sprawdzająca, czy podany kodon jest jednym z kodonów stopu (UAA, UAG, UGA)
     fun isStopKodon(kodon: String): Boolean {
         return kodon in listOf("UAA","UAG","UGA" )
     }
+
+    // Metoda transkrybująca sekwencję RNA na sekwencję białka (ProteinSequence)
     fun transcribe():ProteinSequence{
         var result:String = ""
 
+        // Szukanie kodonu startu (AUG)
         var start = data.indexOf("AUG")
         if (start == -1){
             throw IllegalArgumentException("Brak kodonu start")
         }
+
+        // Szukanie kodonu stopu (UAA, UAG, UGA)
         var stop = -1
         stop = data.indexOf("UAA")
         if (stop == -1){
@@ -73,11 +84,14 @@ class RNASequence:Sequence {
                 }
             }
         }
+
+        // Sprawdzanie, czy liczba zasad azotowych między kodonem start a stop jest podzielna przez 3
         if ((stop - start)%3 != 0){
             throw IllegalArgumentException("Pomiedzy startem, a stopem liczba zasad azotowych nie jest podzielna przez 3 ")
         }
-        var i:Int = start+3
 
+        // Transkrypcja sekwencji RNA na sekwencję białka
+        var i:Int = start+3
         while (i < stop - 2){
             var temp:String? = kodonyNaAminokwasy[data.substring(i, i+3)]
             if (temp == null) {
@@ -86,6 +100,8 @@ class RNASequence:Sequence {
             result += temp
             i += 3
         }
+
+        // Zwracanie nowej sekwencji białka z transkrybowanymi aminokwasami
         return ProteinSequence(identifier + " transkrybowane", result)
     }
 }
